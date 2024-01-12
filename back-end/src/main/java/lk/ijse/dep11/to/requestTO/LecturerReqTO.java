@@ -8,10 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import javax.validation.groups.Default;
 import java.io.Serializable;
 
@@ -34,14 +31,17 @@ public class LecturerReqTO implements Serializable {
     @NotNull(message = "type cannot be empty either full-time or visiting")
     private LecturerType type;
     @Null(groups = Create.class,message = "Display order should be empty when create")
+    @NotNull(groups = Update.class,message = "Display order cannot be empty")
+    @PositiveOrZero(groups = Update.class,message = "Display order should be zero or positive")
     private Integer displayOrder;
 
-    @LecturerImage
+    @LecturerImage(maximumFileSize = 10*1024*1024,message = "file size is too large not file type not valid")
     private MultipartFile picture;
 
-    @Pattern(regexp = "^http://[a-z.0-9A-Z]{2,}$")
+    @Pattern(regexp = "^http(s)://.+$",message = "no a valide linked in URL")
     private String linkedIn;
 
     public interface Create extends Default{}
     public interface Update extends Default{}
+
 }

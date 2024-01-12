@@ -1,8 +1,12 @@
 package lk.ijse.dep11.api;
 
+import lk.ijse.dep11.to.LecturerTO;
 import lk.ijse.dep11.to.requestTO.LecturerReqTO;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.annotation.MultipartConfig;
@@ -12,6 +16,8 @@ import javax.servlet.annotation.MultipartConfig;
 @RequestMapping("api/v1/lecturers")
 public class LecturerHttpController {
 
+    @Autowired
+    private ModelMapper mapper;
 
     @GetMapping
     public void getAllLecturers(){
@@ -37,11 +43,11 @@ public class LecturerHttpController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public void createNewLecturer(@ModelAttribute LecturerReqTO lecturerReqTO){
-        System.out.println(lecturerReqTO.getName());
-        System.out.println(lecturerReqTO);
-        System.out.println("createNewLecturer()");
+    @PostMapping(consumes = "multipart/form-data",produces = "application/json")
+    public LecturerTO createNewLecturer(@ModelAttribute  @Validated(LecturerReqTO.Create.class)LecturerReqTO lecturerReqTO){
+
+        LecturerTO lecturer = mapper.map(lecturerReqTO, LecturerTO.class);
+        return lecturer;
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -59,6 +65,6 @@ public class LecturerHttpController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{lecturer-id}")
     public void deleteLecturer(@PathVariable("lecturer-id") Integer id){
-        System.out.println("deleteLecturerById() " + id);
+        System.out.println("deleteLecturerById " + id);
     }
 }

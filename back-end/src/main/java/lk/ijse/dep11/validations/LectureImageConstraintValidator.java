@@ -15,6 +15,7 @@ public class LectureImageConstraintValidator implements ConstraintValidator<Lect
 
     @Override
     public boolean isValid(MultipartFile multipartFile, ConstraintValidatorContext constraintValidatorContext) {
+        //because picture can be null or empty
         if (multipartFile ==null || multipartFile.isEmpty()) return true;
         if (multipartFile.getContentType() == null || !multipartFile.getContentType().startsWith("image/")) return false;
         return multipartFile.getSize() <= maximumFileSize;
