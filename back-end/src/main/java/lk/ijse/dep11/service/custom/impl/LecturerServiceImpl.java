@@ -75,7 +75,6 @@ public class LecturerServiceImpl implements LecturerService {
         newLecturer.setLinkedIn(null);
         newLecturer = lecturerRepository.save(newLecturer);
 
-
         Blob blobRef = null;
         if (currentLecturer.getPicture() != null){
             //1.delete earlier picture
@@ -92,8 +91,11 @@ public class LecturerServiceImpl implements LecturerService {
             newLecturer.setLinkedIn(linkedInRepository.save(linkedIn));
         }
         //2.update picture
+
         try {
             if(lecturerReqTO.getPicture()!=null){
+                Picture picture = new Picture(newLecturer, "lecturers/" + newLecturer.getId());
+                newLecturer.setPicture(pictureRepository.save(picture));
                 bucket.create(newLecturer.getPicture().getPictureUrl(),lecturerReqTO.getPicture().getInputStream(),lecturerReqTO.getPicture().getContentType());
             }else if (blobRef !=null){
                 blobRef.delete();
