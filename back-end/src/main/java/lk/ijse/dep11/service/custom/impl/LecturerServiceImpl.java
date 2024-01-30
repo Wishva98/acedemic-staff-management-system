@@ -71,12 +71,10 @@ public class LecturerServiceImpl implements LecturerService {
     @Override
     public void updateLecturerViaMultipart(LecturerReqTO lecturerReqTO) {
         Lecturer currentLecturer = lecturerRepository.findById(lecturerReqTO.getId()).orElseThrow(() -> new AppException(404, "No lecturer Found fromthis id"));
-        System.out.println(currentLecturer);
         Lecturer newLecturer = transformer.toLecturer(lecturerReqTO);
         newLecturer.setLinkedIn(null);
         newLecturer = lecturerRepository.save(newLecturer);
 
-        System.out.println("picture  " + lecturerReqTO.getPicture());
         Blob blobRef = null;
         if (currentLecturer.getPicture() != null){
             //1.delete earlier picture
@@ -85,7 +83,6 @@ public class LecturerServiceImpl implements LecturerService {
 
             //save new picture
             Picture picture = new Picture(newLecturer, "lecturers/" + newLecturer.getId());
-            System.out.println(picture);
             newLecturer.setPicture(pictureRepository.save(picture));
         }
         if (currentLecturer.getLinkedIn() !=null){
@@ -101,7 +98,6 @@ public class LecturerServiceImpl implements LecturerService {
                 newLecturer.setPicture(pictureRepository.save(picture));
                 bucket.create(newLecturer.getPicture().getPictureUrl(),lecturerReqTO.getPicture().getInputStream(),lecturerReqTO.getPicture().getContentType());
             }else if (blobRef !=null){
-                System.out.println("blobref not null");
                 blobRef.delete();
             }
         } catch (IOException e) {
