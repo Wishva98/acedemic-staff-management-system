@@ -1,12 +1,10 @@
 package lk.ijse.dep11.entity;
 
-import lk.ijse.dep11.to.LecturerTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
@@ -16,10 +14,19 @@ import java.io.Serializable;
 public class LinkedIn implements SuperEntity {
 
     @Id
+    @Column(name = "lecturer_id")
+    private Integer lecturerId;
+
+    @MapsId
     @OneToOne
     @JoinColumn(name = "lecturer_id",referencedColumnName = "id")
     private Lecturer lecturer;
 
     @Column(name = "linkeIn",nullable = false,length = 2000)
-    private String linkedIn;
+    private String url;
+
+    public LinkedIn(Lecturer lecturer, String url) {
+        this.lecturer = lecturer;
+        this.url = url;
+    }
 }

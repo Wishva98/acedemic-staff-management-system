@@ -29,15 +29,16 @@ public class Lecturer implements SuperEntity {
     @Enumerated(EnumType.STRING)
     private LecturerType type;
 
-    @Column(nullable = false)
-    private Integer displayOrder;
+    //here use int because default value is 0
+    @Column(name = "display_order",nullable = false)
+    private int displayOrder;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "lecturer")
+    @OneToOne(mappedBy = "lecturer",cascade = {CascadeType.REMOVE})
     private Picture picture;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "lecturer")
+    @OneToOne(mappedBy = "lecturer",cascade = {CascadeType.REMOVE})
     private LinkedIn linkedIn;
 
     public Lecturer(String name, String designation, String qualifications, LecturerType type, Integer displayOrder) {

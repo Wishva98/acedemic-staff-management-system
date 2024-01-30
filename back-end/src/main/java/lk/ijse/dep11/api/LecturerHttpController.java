@@ -1,5 +1,6 @@
 package lk.ijse.dep11.api;
 
+import lk.ijse.dep11.service.custom.LecturerService;
 import lk.ijse.dep11.to.LecturerTO;
 import lk.ijse.dep11.to.requestTO.LecturerReqTO;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,9 @@ public class LecturerHttpController {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private LecturerService lecturerService;
 
     @GetMapping
     public void getAllLecturers(){
@@ -45,10 +49,9 @@ public class LecturerHttpController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = "multipart/form-data",produces = "application/json")
     public LecturerTO createNewLecturer(@ModelAttribute  @Validated(LecturerReqTO.Create.class)LecturerReqTO lecturerReqTO){
-
-        LecturerTO lecturer = mapper.map(lecturerReqTO, LecturerTO.class);
-        return lecturer;
+        return lecturerService.saveLecturer(lecturerReqTO);
     }
+
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(value = "/{lecturer-id}", consumes = "multipart/form-data")
