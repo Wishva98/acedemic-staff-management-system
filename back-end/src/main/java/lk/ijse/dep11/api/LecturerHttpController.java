@@ -3,6 +3,7 @@ package lk.ijse.dep11.api;
 import lk.ijse.dep11.service.custom.LecturerService;
 import lk.ijse.dep11.to.LecturerTO;
 import lk.ijse.dep11.to.requestTO.LecturerReqTO;
+import lk.ijse.dep11.util.LecturerType;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.annotation.MultipartConfig;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -24,26 +26,26 @@ public class LecturerHttpController {
     private LecturerService lecturerService;
 
     @GetMapping
-    public void getAllLecturers(){
-        System.out.println("getAllLecturers");
+    public List<LecturerTO> getAllLecturers(){
+        return lecturerService.getAllLecturers(null);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{lecturer-id}")
-    public void getLecturerById(@PathVariable("lecturer-id") Integer id){
-        System.out.println("getLecturerById "+ id);
+    public LecturerTO getLecturerById(@PathVariable("lecturer-id") Integer id){
+        return lecturerService.getLecturerDetails(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(params = "type=full-time")
-    public void getFullTimeLecturers(){
-        System.out.println("getFullTimeLecturers");
+    public List<LecturerTO> getFullTimeLecturers(){
+        return lecturerService.getAllLecturers(LecturerType.FULL_TIME);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(params = "type=part-time")
-    public void getPartTimeLecturers(){
-        System.out.println("getPartTimeLecturers");
+    public List<LecturerTO> getPartTimeLecturers(){
+        return lecturerService.getAllLecturers(LecturerType.VISITING);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,19 +57,24 @@ public class LecturerHttpController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(value = "/{lecturer-id}", consumes = "multipart/form-data")
-    public void updateLecturerByMultipart(@PathVariable("lecturer-id") Integer id) {
-        System.out.println("updateLecturerByMultipart " + id);
+    public void updateLecturerByMultipart(@PathVariable("lecturer-id") Integer id,
+                                          @ModelAttribute @Validated(LecturerReqTO.Update.class) LecturerReqTO lecturerReqTO) {
+        System.out.println(id);
+        lecturerReqTO.setId(id);
+        lecturerService.updateLecturerViaMultipart(lecturerReqTO);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(value = "/{lecturer-id}", consumes = "application/json")
-    public void updateLecturerByJson(@PathVariable("lecturer-id") Integer id) {
-        System.out.println("updateLecturerByJson " + id);
+    public void updateLecturerByJson(@PathVariable("lecturer-id") Integer id, @RequestBody @Validated(LecturerReqTO.Update.class) LecturerTO lecturerTO) {
+        lecturerTO.setId(id);
+        lecturerService.updateLectureDetails(lecturerTO);
     }
+
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{lecturer-id}")
     public void deleteLecturer(@PathVariable("lecturer-id") Integer id){
-        System.out.println("deleteLecturerById " + id);
+        lecturerService.deleteLecturer(id);
     }
 }
